@@ -4,9 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TasksResource\Pages;
 use App\Filament\Resources\TasksResource\RelationManagers;
-use App\Models\Tasks;
+use App\Models\Task;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
 use Filament\Resources\Form;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TasksResource extends Resource
 {
-    protected static ?string $model = Tasks::class;
+    protected static ?string $model = Task::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -23,9 +25,16 @@ class TasksResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nome_tarefa')
+                Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->searchable()
+                    ->preload(),
+                RichEditor::make('description')
+                    ->name('Descrição')
+                    ->columnSpanFull()
             ]);
     }
 
@@ -33,10 +42,14 @@ class TasksResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nome_tarefa')
-                    ->label('Nome da Task'),
-                Tables\Columns\TextColumn::make('criada_em')
-                    ->label('Criada em'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nome'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Criado em')
+                    ->dateTime('d/m/y H:i'),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Atribuído a')
+                    ->default('Ninguém')
             ])
             ->filters([
                 //
@@ -48,14 +61,14 @@ class TasksResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -63,5 +76,5 @@ class TasksResource extends Resource
             'create' => Pages\CreateTasks::route('/create'),
             'edit' => Pages\EditTasks::route('/{record}/edit'),
         ];
-    }    
+    }
 }

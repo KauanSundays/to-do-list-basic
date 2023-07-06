@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UsersResource\Pages;
 use App\Filament\Resources\UsersResource\RelationManagers;
-use App\Models\Users;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersResource extends Resource
 {
-    protected static ?string $model = Users::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -58,14 +58,14 @@ class UsersResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -74,5 +74,5 @@ class UsersResource extends Resource
             //'create' => Pages\CreateUsers::route('/'),
             'edit' => Pages\EditUsers::route('/{record}/edit'),
         ];
-    }    
+    }
 }
